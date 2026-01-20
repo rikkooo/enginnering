@@ -1,0 +1,176 @@
+WSTODO Stage 2: FreeCAD Socket Server
+======================================
+Stage: 2 of 4
+Total Tasks: 99 (86 dev + 12 validation gates + stage closing)
+Source: plan/STAGE_2_PLAN.md
+
+Context
+	Build a FreeCAD Python script with TCP socket server
+	Accept JSON-RPC commands
+	Execute FreeCAD Python API operations (Part, Sketcher)
+	Return results/errors as JSON
+	Target port: 9877
+
+Deliverables
+	src/freecad/server/__init__.py
+	src/freecad/server/server.py
+	src/freecad/server/handlers.py
+	src/freecad/server/primitives.py
+	src/freecad/server/boolean.py
+	src/freecad/server/export.py
+	src/freecad/server/document.py
+	src/freecad/scripts/start_server.py
+
+Tasks
+-----
+
+2.1 Project Setup
+	S2-001	Create directory structure src/freecad/server and src/freecad/scripts
+	S2-002	Create server/__init__.py
+	S2-003	Verify FreeCAD headless mode works freecadcmd
+	S2-004	Test basic Part module import in headless
+	S2-005	VALIDATE: FreeCAD headless runs and Part imports
+
+2.2 Socket Server Core
+	S2-006	Create server.py with FreeCADSocketServer class
+	S2-007	Implement start() method blocking main loop
+	S2-008	Implement stop() method for clean shutdown
+	S2-009	Implement handle_client() for connection handling
+	S2-010	Implement message buffering newline-delimited JSON
+	S2-011	Add connection timeout and error handling
+	S2-012	Implement graceful shutdown on SIGINT
+	S2-013	VALIDATE: Test socket server starts and accepts connection
+
+2.3 Command Handlers
+	S2-014	Create handlers.py with CommandDispatcher class
+	S2-015	Implement dispatch(command) method
+	S2-016	Implement register_handler(method, func)
+	S2-017	Add error wrapping for all handlers
+	S2-018	Implement ping handler for health checks
+	S2-019	Implement get_version handler
+	S2-020	VALIDATE: Test ping and get_version via socket client
+
+2.4 Document Management
+	S2-021	Create document.py module
+	S2-022	Implement new_document(name)
+	S2-023	Implement get_active_document()
+	S2-024	Implement list_documents()
+	S2-025	Implement close_document(name)
+	S2-026	Implement save_document(filepath)
+	S2-027	Implement open_document(filepath)
+	S2-028	Implement ensure_document() auto-create if none
+	S2-029	Register all document handlers with dispatcher
+	S2-030	VALIDATE: Test document create save open via socket
+
+2.5 Part Primitives
+	S2-031	Create primitives.py module
+	S2-032	Implement create_box(length, width, height, name)
+	S2-033	Implement create_sphere(radius, name)
+	S2-034	Implement create_cylinder(radius, height, name)
+	S2-035	Implement create_cone(radius1, radius2, height, name)
+	S2-036	Implement create_torus(radius1, radius2, name)
+	S2-037	Implement create_plane(length, width, name)
+	S2-038	Implement create_wedge(params, name)
+	S2-039	Implement create_helix(pitch, height, radius, name)
+	S2-040	Register all primitive handlers with dispatcher
+	S2-041	VALIDATE: Test create box sphere cylinder via socket
+
+2.6 Object Operations
+	S2-042	Implement get_object(name)
+	S2-043	Implement list_objects()
+	S2-044	Implement delete_object(name)
+	S2-045	Implement rename_object(old_name, new_name)
+	S2-046	Implement copy_object(name, new_name)
+	S2-047	Implement get_object_shape(name)
+	S2-048	Implement set_placement(name, position, rotation)
+	S2-049	Register all object handlers with dispatcher
+	S2-050	VALIDATE: Test list delete transform objects via socket
+
+2.7 Boolean Operations
+	S2-051	Create boolean.py module
+	S2-052	Implement boolean_union(obj1, obj2, name)
+	S2-053	Implement boolean_subtract(obj1, obj2, name)
+	S2-054	Implement boolean_intersect(obj1, obj2, name)
+	S2-055	Implement multi_union(objects, name)
+	S2-056	Implement multi_subtract(base, tools, name)
+	S2-057	Register all boolean handlers with dispatcher
+	S2-058	VALIDATE: Test boolean union and subtract via socket
+
+2.8 Shape Modifications
+	S2-059	Implement extrude(object, direction, length, name)
+	S2-060	Implement revolve(object, axis, angle, name)
+	S2-061	Implement fillet(object, radius, edges, name)
+	S2-062	Implement chamfer(object, size, edges, name)
+	S2-063	Implement mirror(object, plane, name)
+	S2-064	Implement offset(object, distance, name)
+	S2-065	Register all modification handlers with dispatcher
+	S2-066	VALIDATE: Test extrude and fillet via socket
+
+2.9 Export Operations
+	S2-067	Create export.py module
+	S2-068	Implement export_step(objects, filepath)
+	S2-069	Implement export_iges(objects, filepath)
+	S2-070	Implement export_stl(objects, filepath)
+	S2-071	Implement export_obj(objects, filepath)
+	S2-072	Implement export_brep(objects, filepath)
+	S2-073	Implement import_step(filepath)
+	S2-074	Implement import_stl(filepath)
+	S2-075	Register all export handlers with dispatcher
+	S2-076	VALIDATE: Test export STEP and STL via socket
+
+2.10 Code Execution
+	S2-077	Implement execute_python(code)
+	S2-078	Provide FreeCAD/Part in execution context
+	S2-079	Capture stdout/stderr from executed code
+	S2-080	Register execute handler with dispatcher
+	S2-081	VALIDATE: Test execute python code via socket
+
+2.11 Headless Startup
+	S2-082	Create scripts/start_server.py
+	S2-083	Parse command line arguments port host
+	S2-084	Initialize FreeCAD environment
+	S2-085	Auto-start socket server on script load
+	S2-086	Handle SIGINT/SIGTERM for clean shutdown
+	S2-087	VALIDATE: Test freecadcmd start_server.py works
+
+2.12 Integration Testing
+	S2-088	Create tests/test_freecad_client.py simple socket client
+	S2-089	Test create box via socket
+	S2-090	Test create sphere via socket
+	S2-091	Test boolean union via socket
+	S2-092	Test boolean subtract via socket
+	S2-093	Test export STEP via socket
+	S2-094	Test export STL via socket
+	S2-095	Test error handling invalid commands
+	S2-096	Test large model performance
+	S2-097	VALIDATE: All integration tests pass
+
+Stage Closing
+	S2-098	Update README.md with Stage 2 completion status
+	S2-099	Update CHANGELOG.md with Stage 2 deliverables
+	S2-100	Git add commit push Stage 2 changes
+	S2-101	HANDOFF: Read STAGE_3_PLAN.md create IDE todo proceed with Stage 3
+
+Acceptance Criteria
+	FreeCAD script runs in headless mode freecadcmd
+	Socket server starts on port 9877
+	Can create all Part primitives via JSON commands
+	Can perform boolean union operation
+	Can perform boolean subtract operation
+	Can export to STEP format
+	Can export to STL format
+	All integration tests pass
+	Clean shutdown on SIGINT
+
+Technical Notes
+	Headless: Use freecadcmd or freecad --console
+	FreeCADGui unavailable in headless mode
+	Part module: Part.makeBox Part.makeSphere etc
+	Boolean: shape.fuse() shape.cut() shape.common()
+	Export: Part.export([obj], filepath)
+
+Next Stage Instructions
+	1. Read plan/STAGE_3_PLAN.md completely
+	2. Load WSTODO_STAGE3.txt
+	3. Create Windsurf IDE todo list from WSTODO_STAGE3.txt
+	4. Proceed with Stage 3 execution

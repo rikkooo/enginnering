@@ -1,0 +1,217 @@
+WSTODO Stage 3: FastAPI Gateway
+================================
+Stage: 3 of 4
+Total Tasks: 134 (121 dev + 12 validation gates + stage closing)
+Source: plan/STAGE_3_PLAN.md
+
+Context
+	Build FastAPI application as unified API layer
+	REST endpoints for common 3D operations
+	WebSocket for real-time code execution
+	Routes requests to Blender or FreeCAD socket servers
+	Auto-generates OpenAPI documentation
+	Target port: 8000
+
+Deliverables
+	api/__init__.py
+	api/main.py
+	api/config.py
+	api/routers/blender.py
+	api/routers/freecad.py
+	api/routers/health.py
+	api/clients/base_client.py
+	api/clients/blender_client.py
+	api/clients/freecad_client.py
+	api/models/*.py
+	api/websocket/handler.py
+	requirements.txt
+
+Tasks
+-----
+
+3.1 Project Setup
+	S3-001	Create directory structure api/routers api/clients api/models api/websocket
+	S3-002	Create requirements.txt with fastapi uvicorn pydantic websockets
+	S3-003	Create api/__init__.py
+	S3-004	Create config.py with Pydantic Settings ports hosts
+	S3-005	Create .env.example with environment variables
+	S3-006	VALIDATE: Verify directory structure and requirements.txt
+
+3.2 Socket Clients
+	S3-007	Create clients/__init__.py
+	S3-008	Create clients/base_client.py with BaseSocketClient
+	S3-009	Implement connect() method TCP connection
+	S3-010	Implement disconnect() method clean close
+	S3-011	Implement send_command(method, params) method JSON-RPC
+	S3-012	Implement receive_response() method parse JSON
+	S3-013	Implement connection pooling reuse connections
+	S3-014	Implement retry logic with backoff resilience
+	S3-015	Create clients/blender_client.py extends base
+	S3-016	Create clients/freecad_client.py extends base
+	S3-017	Add async versions of send/receive for FastAPI
+	S3-018	VALIDATE: Test clients connect to Blender and FreeCAD servers
+
+3.3 Pydantic Models
+	S3-019	Create models/__init__.py
+	S3-020	Create models/common.py Vector3 Color etc
+	S3-021	Create models/primitives.py primitive params
+	S3-022	Define CubeParams model location size name
+	S3-023	Define SphereParams model location radius name
+	S3-024	Define CylinderParams model location radius depth name
+	S3-025	Define ConeParams model
+	S3-026	Define TorusParams model
+	S3-027	Define PlaneParams model
+	S3-028	Define BoxParams model FreeCAD length width height
+	S3-029	Create models/materials.py
+	S3-030	Define MaterialParams model name color metallic roughness
+	S3-031	Create models/rendering.py
+	S3-032	Define RenderParams model output resolution engine samples
+	S3-033	Create models/boolean.py
+	S3-034	Define BooleanParams model object1 object2 operation name
+	S3-035	Create models/export.py
+	S3-036	Define ExportParams model objects filepath format
+	S3-037	Create models/responses.py
+	S3-038	Define APIResponse model status result error
+	S3-039	Define ObjectInfo model name type location
+	S3-040	Define SceneInfo model objects list
+	S3-041	VALIDATE: All Pydantic models import without errors
+
+3.4 Health and Status Endpoints
+	S3-042	Create routers/__init__.py
+	S3-043	Create routers/health.py
+	S3-044	Implement GET /health API health
+	S3-045	Implement GET /health/blender Blender status ping socket
+	S3-046	Implement GET /health/freecad FreeCAD status ping socket
+	S3-047	Implement GET /version API version
+	S3-048	VALIDATE: Test health endpoints return correct status
+
+3.5 Blender REST Endpoints
+	S3-049	Create routers/blender.py
+	S3-050	Implement POST /api/v1/blender/primitives/cube
+	S3-051	Implement POST /api/v1/blender/primitives/sphere
+	S3-052	Implement POST /api/v1/blender/primitives/cylinder
+	S3-053	Implement POST /api/v1/blender/primitives/cone
+	S3-054	Implement POST /api/v1/blender/primitives/torus
+	S3-055	Implement POST /api/v1/blender/primitives/plane
+	S3-056	Implement GET /api/v1/blender/objects list objects
+	S3-057	Implement GET /api/v1/blender/objects/{name} get object
+	S3-058	Implement DELETE /api/v1/blender/objects/{name} delete object
+	S3-059	Implement PATCH /api/v1/blender/objects/{name} transform
+	S3-060	Implement POST /api/v1/blender/materials create material
+	S3-061	Implement POST /api/v1/blender/materials/apply apply to object
+	S3-062	Implement GET /api/v1/blender/scene scene info
+	S3-063	Implement DELETE /api/v1/blender/scene clear scene
+	S3-064	Implement POST /api/v1/blender/render render image
+	S3-065	Implement POST /api/v1/blender/export export model
+	S3-066	Implement POST /api/v1/blender/camera add camera
+	S3-067	Implement POST /api/v1/blender/light add light
+	S3-068	VALIDATE: Test Blender primitive endpoints create objects
+
+3.6 FreeCAD REST Endpoints
+	S3-069	Create routers/freecad.py
+	S3-070	Implement POST /api/v1/freecad/primitives/box
+	S3-071	Implement POST /api/v1/freecad/primitives/sphere
+	S3-072	Implement POST /api/v1/freecad/primitives/cylinder
+	S3-073	Implement POST /api/v1/freecad/primitives/cone
+	S3-074	Implement POST /api/v1/freecad/primitives/torus
+	S3-075	Implement GET /api/v1/freecad/objects list objects
+	S3-076	Implement GET /api/v1/freecad/objects/{name} get object
+	S3-077	Implement DELETE /api/v1/freecad/objects/{name} delete object
+	S3-078	Implement POST /api/v1/freecad/boolean/union
+	S3-079	Implement POST /api/v1/freecad/boolean/subtract
+	S3-080	Implement POST /api/v1/freecad/boolean/intersect
+	S3-081	Implement POST /api/v1/freecad/export STEP/STL
+	S3-082	Implement GET /api/v1/freecad/documents list documents
+	S3-083	Implement POST /api/v1/freecad/documents new document
+	S3-084	VALIDATE: Test FreeCAD primitive and boolean endpoints
+
+3.7 WebSocket Handler
+	S3-085	Create websocket/__init__.py
+	S3-086	Create websocket/handler.py
+	S3-087	Implement WebSocket /ws/blender endpoint
+	S3-088	Implement WebSocket /ws/freecad endpoint
+	S3-089	Handle execute message type run Python code
+	S3-090	Handle subscribe message type event subscription
+	S3-091	Implement connection management track active connections
+	S3-092	Implement broadcast capability send to all clients
+	S3-093	Add heartbeat/ping-pong keep alive
+	S3-094	VALIDATE: Test WebSocket connection and code execution
+
+3.8 FastAPI App Assembly
+	S3-095	Create main.py with FastAPI app
+	S3-096	Configure CORS middleware allow cross-origin
+	S3-097	Include health router
+	S3-098	Include blender router
+	S3-099	Include freecad router
+	S3-100	Mount WebSocket endpoints
+	S3-101	Configure OpenAPI metadata title description version
+	S3-102	Add startup event init clients
+	S3-103	Add shutdown event cleanup
+	S3-104	Configure logging
+	S3-105	VALIDATE: FastAPI starts and Swagger docs available at /docs
+
+3.9 Error Handling
+	S3-106	Create custom exception classes
+	S3-107	Create BlenderConnectionError
+	S3-108	Create FreeCADConnectionError
+	S3-109	Create CommandExecutionError
+	S3-110	Implement global exception handler consistent responses
+	S3-111	Add request validation error handler Pydantic errors
+	S3-112	VALIDATE: Test error responses for invalid requests
+
+3.10 Documentation
+	S3-113	Add docstrings to all endpoints for OpenAPI
+	S3-114	Add example requests/responses in Pydantic models
+	S3-115	Create docs/API.md with usage guide
+	S3-116	Verify Swagger UI at /docs
+	S3-117	Verify ReDoc at /redoc
+	S3-118	VALIDATE: Swagger and ReDoc show all endpoints
+
+3.11 Startup Scripts
+	S3-119	Create scripts/start_api.sh start uvicorn
+	S3-120	Create scripts/start_all.sh start all services
+	S3-121	Create scripts/stop_all.sh stop all services
+	S3-122	Create scripts/health_check.sh check all services
+	S3-123	VALIDATE: Scripts start and stop services correctly
+
+3.12 Testing
+	S3-124	Create tests/test_api/__init__.py
+	S3-125	Create tests/test_api/conftest.py fixtures
+	S3-126	Test health endpoints
+	S3-127	Test Blender primitive endpoints
+	S3-128	Test FreeCAD primitive endpoints
+	S3-129	Test WebSocket connection
+	S3-130	Test WebSocket code execution
+	S3-131	Test error responses
+	S3-132	Test connection failure handling
+	S3-133	VALIDATE: All API tests pass
+
+Stage Closing
+	S3-134	Update README.md with Stage 3 completion status
+	S3-135	Update CHANGELOG.md with Stage 3 deliverables
+	S3-136	Git add commit push Stage 3 changes
+	S3-137	HANDOFF: Read STAGE_4_PLAN.md create IDE todo proceed with Stage 4
+
+Acceptance Criteria
+	FastAPI server starts on port 8000
+	Swagger docs available at /docs
+	Health check endpoints work
+	All Blender primitive endpoints functional
+	All FreeCAD primitive endpoints functional
+	Boolean operations work via API
+	Render endpoint produces image
+	Export endpoints produce files
+	WebSocket code execution works
+	All API tests pass
+
+Technical Notes
+	URL structure: /api/v1/{application}/{resource}
+	Response format: {status, result} or {status, error}
+	Use async/await for non-blocking socket calls
+	Connection pooling for performance
+
+Next Stage Instructions
+	1. Read plan/STAGE_4_PLAN.md completely
+	2. Load WSTODO_STAGE4.txt
+	3. Create Windsurf IDE todo list from WSTODO_STAGE4.txt
+	4. Proceed with Stage 4 execution

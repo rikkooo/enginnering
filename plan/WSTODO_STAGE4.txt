@@ -1,0 +1,222 @@
+WSTODO Stage 4: AI Integration and Testing
+===========================================
+Stage: 4 of 4
+Total Tasks: 138 (125 dev + 12 validation gates + stage closing)
+Source: plan/STAGE_4_PLAN.md
+
+Context
+	Prepare system for AI agent integration
+	Define function/tool schemas for AI providers
+	Create comprehensive test suite
+	Build example workflows
+	Write documentation
+	Final stage - production readiness
+
+Deliverables
+	ai/schemas/openai_functions.json
+	ai/schemas/anthropic_tools.json
+	ai/schemas/loader.py
+	ai/executor.py
+	ai/examples/*.py
+	tests/test_blender/*.py
+	tests/test_freecad/*.py
+	tests/integration/*.py
+	docs/SETUP.md
+	docs/API.md
+	docs/EXAMPLES.md
+	docs/AI_INTEGRATION.md
+	config/*.yaml
+	pyproject.toml
+
+Tasks
+-----
+
+4.1 OpenAI Function Schemas
+	S4-001	Create ai/schemas/ directory
+	S4-002	Create openai_functions.json base structure
+	S4-003	Define create_3d_primitive function
+	S4-004	Define modify_object function transform rename delete
+	S4-005	Define apply_material function
+	S4-006	Define boolean_operation function union subtract intersect
+	S4-007	Define render_scene function Blender rendering
+	S4-008	Define export_model function various formats
+	S4-009	Define get_scene_info function query scene state
+	S4-010	Define execute_code function run arbitrary Python
+	S4-011	Define add_camera function camera setup
+	S4-012	Define add_light function lighting setup
+	S4-013	Validate JSON schema syntax
+	S4-014	VALIDATE: OpenAI functions JSON is valid
+
+4.2 Anthropic Tool Definitions
+	S4-015	Create anthropic_tools.json base structure
+	S4-016	Define create_3d_primitive tool with input_schema
+	S4-017	Define modify_object tool
+	S4-018	Define apply_material tool
+	S4-019	Define boolean_operation tool
+	S4-020	Define render_scene tool
+	S4-021	Define export_model tool
+	S4-022	Define get_scene_info tool
+	S4-023	Define execute_code tool
+	S4-024	Validate tool definitions
+	S4-025	VALIDATE: Anthropic tools JSON is valid
+
+4.3 Python Schema Helpers
+	S4-026	Create ai/__init__.py
+	S4-027	Create ai/schemas/__init__.py
+	S4-028	Create ai/schemas/loader.py load JSON schemas
+	S4-029	Implement get_openai_functions() return function list
+	S4-030	Implement get_anthropic_tools() return tool list
+	S4-031	Implement get_function_by_name(name) lookup helper
+	S4-032	VALIDATE: Schema helpers load and return correct data
+
+4.4 Function Executor
+	S4-033	Create ai/executor.py
+	S4-034	Implement FunctionExecutor class
+	S4-035	Implement execute(function_name, arguments) route to API
+	S4-036	Map function names to API endpoints
+	S4-037	Handle API responses and errors
+	S4-038	Add async version execute_async()
+	S4-039	VALIDATE: Executor routes calls to correct API endpoints
+
+4.5 Example Workflows
+	S4-040	Create ai/examples/ directory
+	S4-041	Create simple_scene.py basic shapes cube sphere render
+	S4-042	Create boolean_demo.py boolean ops union subtract
+	S4-043	Create material_demo.py colored objects
+	S4-044	Create export_demo.py STEP STL GLB
+	S4-045	Create openai_integration.py OpenAI function calling
+	S4-046	Create anthropic_integration.py Claude tool use
+	S4-047	Create batch_creation.py multiple objects performance
+	S4-048	Create full_workflow.py end-to-end pipeline
+	S4-049	VALIDATE: Example workflows run without errors
+
+4.6 Unit Tests Blender
+	S4-050	Create tests/test_blender/__init__.py
+	S4-051	Create tests/test_blender/conftest.py fixtures
+	S4-052	Create test_primitives.py
+	S4-053	Test create cube
+	S4-054	Test create sphere
+	S4-055	Test create cylinder
+	S4-056	Test create with custom location
+	S4-057	Test create with custom name
+	S4-058	Create test_materials.py
+	S4-059	Test create material
+	S4-060	Test apply material to object
+	S4-061	Test set material color
+	S4-062	Create test_rendering.py
+	S4-063	Test render to PNG
+	S4-064	Test set render resolution
+	S4-065	Create test_export.py
+	S4-066	Test export to GLB
+	S4-067	Test export to OBJ
+	S4-068	VALIDATE: All Blender unit tests pass
+
+4.7 Unit Tests FreeCAD
+	S4-069	Create tests/test_freecad/__init__.py
+	S4-070	Create tests/test_freecad/conftest.py fixtures
+	S4-071	Create test_primitives.py
+	S4-072	Test create box
+	S4-073	Test create sphere
+	S4-074	Test create cylinder
+	S4-075	Test create with dimensions
+	S4-076	Create test_boolean.py
+	S4-077	Test boolean union
+	S4-078	Test boolean subtract
+	S4-079	Test boolean intersect
+	S4-080	Create test_export.py
+	S4-081	Test export to STEP
+	S4-082	Test export to STL
+	S4-083	Test export to IGES
+	S4-084	VALIDATE: All FreeCAD unit tests pass
+
+4.8 Integration Tests
+	S4-085	Create tests/integration/__init__.py
+	S4-086	Create tests/integration/conftest.py start services
+	S4-087	Create test_full_workflow.py
+	S4-088	Test create scene add objects render Blender workflow
+	S4-089	Test create parts boolean export FreeCAD workflow
+	S4-090	Test API to Blender to response full stack
+	S4-091	Test API to FreeCAD to response full stack
+	S4-092	Test WebSocket code execution
+	S4-093	Test concurrent requests load test
+	S4-094	Test error recovery resilience
+	S4-095	VALIDATE: All integration tests pass
+
+4.9 Test Configuration
+	S4-096	Create tests/conftest.py root fixtures
+	S4-097	Create pytest.ini configuration
+	S4-098	Create tests/requirements.txt pytest pytest-asyncio
+	S4-099	Add test coverage configuration pytest-cov
+	S4-100	Create GitHub Actions workflow optional CI/CD
+	S4-101	VALIDATE: pytest runs all tests with coverage
+
+4.10 Documentation
+	S4-102	Create docs/ directory
+	S4-103	Create docs/SETUP.md installation guide
+	S4-104	Document Blender installation
+	S4-105	Document FreeCAD installation
+	S4-106	Document Python dependencies
+	S4-107	Document service startup
+	S4-108	Create docs/API.md API reference
+	S4-109	Document all Blender endpoints
+	S4-110	Document all FreeCAD endpoints
+	S4-111	Document WebSocket usage
+	S4-112	Create docs/EXAMPLES.md usage examples
+	S4-113	Add curl examples
+	S4-114	Add Python examples
+	S4-115	Add AI integration examples
+	S4-116	Create docs/AI_INTEGRATION.md
+	S4-117	Document OpenAI function calling
+	S4-118	Document Anthropic tool use
+	S4-119	Update root README.md project overview
+	S4-120	VALIDATE: All documentation complete and accurate
+
+4.11 Configuration Files
+	S4-121	Create config/ directory
+	S4-122	Create config/blender.yaml Blender settings
+	S4-123	Create config/freecad.yaml FreeCAD settings
+	S4-124	Create config/api.yaml API settings
+	S4-125	Create pyproject.toml project metadata
+	S4-126	VALIDATE: Configuration files load correctly
+
+4.12 Final Validation
+	S4-127	Run all unit tests pytest tests/
+	S4-128	Run integration tests
+	S4-129	Verify Swagger docs complete
+	S4-130	Test OpenAI integration example
+	S4-131	Test Anthropic integration example
+	S4-132	Performance benchmark requests/second
+	S4-133	Memory usage check no leaks
+	S4-134	Clean shutdown test all services
+	S4-135	Documentation review complete and accurate
+	S4-136	Code cleanup and formatting Black isort
+	S4-137	VALIDATE: All acceptance criteria met
+
+Stage Closing
+	S4-138	Update README.md with project completion status
+	S4-139	Update CHANGELOG.md with v1.0.0 release
+	S4-140	Git add commit push Stage 4 changes
+	S4-141	PROJECT COMPLETE: Tag v1.0.0 release
+
+Acceptance Criteria
+	OpenAI function schemas valid and complete
+	Anthropic tool definitions valid and complete
+	All unit tests pass >90% coverage
+	All integration tests pass
+	OpenAI integration example works
+	Anthropic integration example works
+	Documentation complete
+	README provides clear setup instructions
+	All services start/stop cleanly
+
+Technical Notes
+	Testing: Use mocks for unit tests real services for integration
+	Coverage goal: >90%
+	Documentation: Keep in sync with code changes
+	AI schemas: Test with actual AI providers before finalizing
+
+Project Complete Instructions
+	1. Verify all 4 stages complete
+	2. Run full test suite
+	3. Tag release v1.0.0
+	4. Celebrate!

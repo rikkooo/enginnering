@@ -1,0 +1,177 @@
+WSTODO Stage 1: Blender Socket Addon
+=====================================
+Stage: 1 of 4
+Total Tasks: 98 (87 dev + 11 validation gates + stage closing)
+Source: research/STAGE_1_PLAN.md
+
+Context
+	Build a Blender addon with TCP socket server
+	Accept JSON-RPC commands
+	Execute Blender Python API operations
+	Return results/errors as JSON
+	Target port: 9876
+
+Deliverables
+	src/blender/addon/__init__.py
+	src/blender/addon/server.py
+	src/blender/addon/handlers.py
+	src/blender/addon/primitives.py
+	src/blender/addon/materials.py
+	src/blender/addon/rendering.py
+	src/blender/addon/scene.py
+	src/blender/scripts/start_server.py
+	src/common/protocol.py
+	src/common/exceptions.py
+
+Tasks
+-----
+
+1.1 Project Setup
+	S1-001	Create directory structure src/blender/addon and src/common
+	S1-002	Create addon/__init__.py with bl_info metadata
+	S1-003	Create common/protocol.py with JSON-RPC message classes
+	S1-004	Create common/exceptions.py with custom exceptions
+	S1-005	VALIDATE: Verify directory structure and files exist
+
+1.2 Socket Server Core
+	S1-006	Create server.py with BlenderSocketServer class
+	S1-007	Implement start() method with threading
+	S1-008	Implement stop() method for clean shutdown
+	S1-009	Implement handle_client() for connection handling
+	S1-010	Implement message buffering newline-delimited JSON
+	S1-011	Add connection timeout and error handling
+	S1-012	Create Blender operator BLENDER_OT_start_api_server
+	S1-013	Create Blender operator BLENDER_OT_stop_api_server
+	S1-014	Add server status to Blender UI panel
+	S1-015	VALIDATE: Test socket server starts and accepts connection
+
+1.3 Command Handlers
+	S1-016	Create handlers.py with CommandDispatcher class
+	S1-017	Implement dispatch(command) method
+	S1-018	Implement register_handler(method, func)
+	S1-019	Add error wrapping for all handlers
+	S1-020	Implement ping handler for health checks
+	S1-021	Implement get_version handler
+	S1-022	VALIDATE: Test ping and get_version via socket client
+
+1.4 Primitive Operations
+	S1-023	Create primitives.py module
+	S1-024	Implement create_cube(location, size, name)
+	S1-025	Implement create_sphere(location, radius, segments, name)
+	S1-026	Implement create_cylinder(location, radius, depth, name)
+	S1-027	Implement create_cone(location, radius1, radius2, depth, name)
+	S1-028	Implement create_torus(location, major_radius, minor_radius, name)
+	S1-029	Implement create_plane(location, size, name)
+	S1-030	Implement create_empty(location, type, name)
+	S1-031	Register all primitive handlers with dispatcher
+	S1-032	VALIDATE: Test create cube sphere cylinder via socket
+
+1.5 Object Operations
+	S1-033	Implement get_object(name)
+	S1-034	Implement list_objects()
+	S1-035	Implement delete_object(name)
+	S1-036	Implement select_object(name)
+	S1-037	Implement transform_object(name, location, rotation, scale)
+	S1-038	Implement duplicate_object(name, new_name)
+	S1-039	Implement rename_object(old_name, new_name)
+	S1-040	Register all object handlers with dispatcher
+	S1-041	VALIDATE: Test list delete transform objects via socket
+
+1.6 Material Operations
+	S1-042	Create materials.py module
+	S1-043	Implement create_material(name, color)
+	S1-044	Implement apply_material(object_name, material_name)
+	S1-045	Implement set_material_color(material_name, color)
+	S1-046	Implement set_material_metallic(material_name, value)
+	S1-047	Implement set_material_roughness(material_name, value)
+	S1-048	Implement list_materials()
+	S1-049	Implement delete_material(name)
+	S1-050	Register all material handlers with dispatcher
+	S1-051	VALIDATE: Test create and apply material via socket
+
+1.7 Scene Operations
+	S1-052	Create scene.py module
+	S1-053	Implement get_scene_info()
+	S1-054	Implement clear_scene()
+	S1-055	Implement new_scene(name)
+	S1-056	Implement save_scene(filepath)
+	S1-057	Implement load_scene(filepath)
+	S1-058	Implement add_camera(location, rotation, name)
+	S1-059	Implement add_light(type, location, energy, name)
+	S1-060	Implement set_active_camera(name)
+	S1-061	Register all scene handlers with dispatcher
+	S1-062	VALIDATE: Test scene info clear camera light via socket
+
+1.8 Rendering Operations
+	S1-063	Create rendering.py module
+	S1-064	Implement set_render_engine(engine)
+	S1-065	Implement set_render_resolution(width, height)
+	S1-066	Implement set_render_samples(samples)
+	S1-067	Implement render_image(output_path)
+	S1-068	Implement render_animation(output_path, start, end)
+	S1-069	Implement get_render_progress()
+	S1-070	Register all render handlers with dispatcher
+	S1-071	VALIDATE: Test render image to PNG via socket
+
+1.9 Export Operations
+	S1-072	Implement export_obj(filepath, objects)
+	S1-073	Implement export_fbx(filepath, objects)
+	S1-074	Implement export_gltf(filepath, objects)
+	S1-075	Implement export_stl(filepath, objects)
+	S1-076	Register all export handlers with dispatcher
+	S1-077	VALIDATE: Test export GLB and OBJ via socket
+
+1.10 Code Execution
+	S1-078	Implement execute_python(code)
+	S1-079	Add safety checks for dangerous operations
+	S1-080	Capture stdout/stderr from executed code
+	S1-081	Register execute handler with dispatcher
+	S1-082	VALIDATE: Test execute python code via socket
+
+1.11 Headless Startup
+	S1-083	Create scripts/start_server.py
+	S1-084	Parse command line arguments port host
+	S1-085	Auto-start socket server on script load
+	S1-086	Keep Blender running event loop
+	S1-087	Handle SIGINT/SIGTERM for clean shutdown
+	S1-088	VALIDATE: Test blender -b -P start_server.py works
+
+1.12 Integration Testing
+	S1-089	Create tests/test_client.py simple socket client
+	S1-090	Test create cube via socket
+	S1-091	Test create sphere via socket
+	S1-092	Test apply material via socket
+	S1-093	Test render scene via socket
+	S1-094	Test export GLB via socket
+	S1-095	Test multiple concurrent connections
+	S1-096	Test error handling invalid commands
+	S1-097	Test large scene performance
+	S1-098	VALIDATE: All integration tests pass
+
+Stage Closing
+	S1-099	Update README.md with Stage 1 completion status
+	S1-100	Update CHANGELOG.md with Stage 1 deliverables
+	S1-101	Git add commit push Stage 1 changes
+	S1-102	HANDOFF: Read STAGE_2_PLAN.md create WSTODO_STAGE2.txt create IDE todo
+
+Acceptance Criteria
+	Blender addon loads without errors
+	Socket server starts on port 9876
+	Can create all primitive shapes via JSON commands
+	Can apply materials to objects
+	Can render scene to PNG file
+	Can export scene to GLB format
+	Server runs in headless mode
+	All integration tests pass
+	Clean shutdown on SIGINT
+
+Technical Notes
+	Threading: Blender Python API not thread-safe use bpy.app.timers
+	Modal Operators: Consider for long-running tasks
+	Error Handling: Wrap bpy calls in try/except
+
+Next Stage Instructions
+	1. Read plan/STAGE_2_PLAN.md completely
+	2. Load WSTODO_STAGE2.txt
+	3. Create Windsurf IDE todo list from WSTODO_STAGE2.txt
+	4. Proceed with Stage 2 execution
