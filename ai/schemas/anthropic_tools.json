@@ -1,0 +1,302 @@
+{
+  "tools": [
+    {
+      "name": "create_3d_primitive",
+      "description": "Create a 3D primitive shape in Blender or FreeCAD. Use this to add basic geometric shapes like cubes, spheres, cylinders to your 3D scene.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "enum": ["blender", "freecad"],
+            "description": "Target application - use 'blender' for rendering/visualization, 'freecad' for CAD/engineering"
+          },
+          "primitive_type": {
+            "type": "string",
+            "enum": ["cube", "sphere", "cylinder", "cone", "torus", "plane", "box"],
+            "description": "Type of primitive to create"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the created object"
+          },
+          "location": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "XYZ position [x, y, z]"
+          },
+          "size": {
+            "type": "number",
+            "description": "Size/scale of the primitive (Blender)"
+          },
+          "radius": {
+            "type": "number",
+            "description": "Radius for sphere, cylinder, cone, torus"
+          },
+          "height": {
+            "type": "number",
+            "description": "Height for cylinder, cone, box"
+          },
+          "length": {
+            "type": "number",
+            "description": "Length for FreeCAD box"
+          },
+          "width": {
+            "type": "number",
+            "description": "Width for FreeCAD box"
+          }
+        },
+        "required": ["application", "primitive_type"]
+      }
+    },
+    {
+      "name": "modify_object",
+      "description": "Modify an existing 3D object by transforming (move/rotate/scale), renaming, or deleting it.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "enum": ["blender", "freecad"],
+            "description": "Target application"
+          },
+          "object_name": {
+            "type": "string",
+            "description": "Name of the object to modify"
+          },
+          "action": {
+            "type": "string",
+            "enum": ["transform", "rename", "delete"],
+            "description": "Action to perform on the object"
+          },
+          "location": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "New XYZ position for transform action"
+          },
+          "rotation": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "New XYZ rotation for transform action"
+          },
+          "scale": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "New XYZ scale for transform action"
+          },
+          "new_name": {
+            "type": "string",
+            "description": "New name for rename action"
+          }
+        },
+        "required": ["application", "object_name", "action"]
+      }
+    },
+    {
+      "name": "apply_material",
+      "description": "Create and apply a PBR material to an object in Blender. Set color, metallic, and roughness properties.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "object_name": {
+            "type": "string",
+            "description": "Name of the object to apply material to"
+          },
+          "material_name": {
+            "type": "string",
+            "description": "Name for the material"
+          },
+          "color": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "RGBA color [r, g, b, a] with values 0-1"
+          },
+          "metallic": {
+            "type": "number",
+            "description": "Metallic value 0-1 (0=dielectric, 1=metal)"
+          },
+          "roughness": {
+            "type": "number",
+            "description": "Roughness value 0-1 (0=smooth/glossy, 1=rough/matte)"
+          }
+        },
+        "required": ["object_name", "material_name"]
+      }
+    },
+    {
+      "name": "boolean_operation",
+      "description": "Perform CSG boolean operation between two objects in FreeCAD. Union combines, subtract cuts, intersect keeps overlap.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": ["union", "subtract", "intersect"],
+            "description": "Boolean operation: union (combine), subtract (cut), intersect (overlap)"
+          },
+          "object1": {
+            "type": "string",
+            "description": "First object name (base object for subtract)"
+          },
+          "object2": {
+            "type": "string",
+            "description": "Second object name (tool object for subtract)"
+          },
+          "result_name": {
+            "type": "string",
+            "description": "Name for the resulting object"
+          }
+        },
+        "required": ["operation", "object1", "object2"]
+      }
+    },
+    {
+      "name": "render_scene",
+      "description": "Render the Blender scene to an image file. Supports Cycles (realistic) and Eevee (fast) render engines.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "output_path": {
+            "type": "string",
+            "description": "Output file path for the rendered image (e.g., /tmp/render.png)"
+          },
+          "resolution_x": {
+            "type": "integer",
+            "description": "Horizontal resolution in pixels (default: 1920)"
+          },
+          "resolution_y": {
+            "type": "integer",
+            "description": "Vertical resolution in pixels (default: 1080)"
+          },
+          "engine": {
+            "type": "string",
+            "enum": ["CYCLES", "EEVEE", "WORKBENCH"],
+            "description": "Render engine: CYCLES (realistic), EEVEE (fast), WORKBENCH (viewport)"
+          },
+          "samples": {
+            "type": "integer",
+            "description": "Number of render samples (higher = better quality, slower)"
+          }
+        },
+        "required": ["output_path"]
+      }
+    },
+    {
+      "name": "export_model",
+      "description": "Export 3D model to various file formats. Use GLB/GLTF for web, STEP for CAD exchange, STL for 3D printing.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "enum": ["blender", "freecad"],
+            "description": "Source application"
+          },
+          "filepath": {
+            "type": "string",
+            "description": "Output file path with extension"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["GLB", "GLTF", "FBX", "OBJ", "STL", "STEP", "IGES", "BREP"],
+            "description": "Export format"
+          },
+          "objects": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Object names to export (exports all if omitted)"
+          }
+        },
+        "required": ["application", "filepath", "format"]
+      }
+    },
+    {
+      "name": "get_scene_info",
+      "description": "Get information about the current scene/document including list of objects and their properties.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "enum": ["blender", "freecad"],
+            "description": "Target application"
+          },
+          "include_objects": {
+            "type": "boolean",
+            "description": "Include detailed list of objects"
+          }
+        },
+        "required": ["application"]
+      }
+    },
+    {
+      "name": "execute_code",
+      "description": "Execute arbitrary Python code in Blender (bpy) or FreeCAD (FreeCAD/Part) context for advanced operations.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "enum": ["blender", "freecad"],
+            "description": "Target application"
+          },
+          "code": {
+            "type": "string",
+            "description": "Python code to execute"
+          }
+        },
+        "required": ["application", "code"]
+      }
+    },
+    {
+      "name": "add_camera",
+      "description": "Add a camera to the Blender scene for rendering. Position and orient it to frame your objects.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Camera name"
+          },
+          "location": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "XYZ position [x, y, z]"
+          },
+          "rotation": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "XYZ rotation in radians"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_light",
+      "description": "Add a light source to the Blender scene. Use SUN for outdoor, POINT for indoor, AREA for soft shadows.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Light name"
+          },
+          "light_type": {
+            "type": "string",
+            "enum": ["POINT", "SUN", "SPOT", "AREA"],
+            "description": "Type of light source"
+          },
+          "location": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "XYZ position"
+          },
+          "energy": {
+            "type": "number",
+            "description": "Light energy/power (watts for POINT, strength for SUN)"
+          }
+        }
+      }
+    }
+  ]
+}

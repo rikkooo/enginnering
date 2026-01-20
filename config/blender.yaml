@@ -1,0 +1,22 @@
+# Blender Server Configuration
+
+server:
+  host: "127.0.0.1"
+  port: 9876
+  timeout: 30.0
+
+rendering:
+  default_engine: "CYCLES"
+  default_samples: 128
+  default_resolution:
+    x: 1920
+    y: 1080
+
+export:
+  default_format: "GLB"
+  supported_formats:
+    - GLB
+    - GLTF
+    - FBX
+    - OBJ
+    - STL

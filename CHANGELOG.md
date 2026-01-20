@@ -7,10 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [1.0.0] - 2026-01-20
 
-### Planned
-- **Stage 4:** AI function schemas, test suite, documentation
+### 🎉 Project Complete!
+
+- **Stage 4 Complete: AI Integration & Testing**
+- `ai/schemas/` — AI function/tool schemas
+  - `openai_functions.json` — OpenAI function calling format
+  - `anthropic_tools.json` — Anthropic Claude tool use format
+  - `loader.py` — Schema loading utilities
+- `ai/executor.py` — Function executor for AI integration
+- `ai/examples/` — Example workflows
+  - `simple_scene.py` — Basic scene creation
+  - `boolean_demo.py` — CSG boolean operations
+  - `material_demo.py` — Material application
+  - `openai_integration.py` — OpenAI function calling example
+  - `anthropic_integration.py` — Anthropic tool use example
+- `tests/` — Comprehensive test suite
+  - `test_blender/` — Blender unit tests
+  - `test_freecad/` — FreeCAD unit tests
+  - `integration/` — Integration tests
+- `docs/` — Complete documentation
+  - `SETUP.md` — Installation guide
+  - `API.md` — API reference
+  - `AI_INTEGRATION.md` — AI integration guide
+- `config/` — Configuration files
+- `pyproject.toml` — Project metadata
+- All 23 tests passing
 
 ---
 

@@ -1,0 +1,302 @@
+{
+  "functions": [
+    {
+      "name": "create_3d_primitive",
+      "description": "Create a 3D primitive shape in Blender or FreeCAD",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "enum": ["blender", "freecad"],
+            "description": "Target application"
+          },
+          "primitive_type": {
+            "type": "string",
+            "enum": ["cube", "sphere", "cylinder", "cone", "torus", "plane", "box"],
+            "description": "Type of primitive to create"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name for the created object"
+          },
+          "location": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "XYZ position [x, y, z]"
+          },
+          "size": {
+            "type": "number",
+            "description": "Size/scale of the primitive"
+          },
+          "radius": {
+            "type": "number",
+            "description": "Radius for sphere, cylinder, cone, torus"
+          },
+          "height": {
+            "type": "number",
+            "description": "Height for cylinder, cone, box"
+          },
+          "length": {
+            "type": "number",
+            "description": "Length for FreeCAD box"
+          },
+          "width": {
+            "type": "number",
+            "description": "Width for FreeCAD box"
+          }
+        },
+        "required": ["application", "primitive_type"]
+      }
+    },
+    {
+      "name": "modify_object",
+      "description": "Modify an existing 3D object (transform, rename, or delete)",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "enum": ["blender", "freecad"],
+            "description": "Target application"
+          },
+          "object_name": {
+            "type": "string",
+            "description": "Name of the object to modify"
+          },
+          "action": {
+            "type": "string",
+            "enum": ["transform", "rename", "delete"],
+            "description": "Action to perform"
+          },
+          "location": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "New XYZ position for transform"
+          },
+          "rotation": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "New XYZ rotation for transform"
+          },
+          "scale": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "New XYZ scale for transform"
+          },
+          "new_name": {
+            "type": "string",
+            "description": "New name for rename action"
+          }
+        },
+        "required": ["application", "object_name", "action"]
+      }
+    },
+    {
+      "name": "apply_material",
+      "description": "Create and apply a material to an object in Blender",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "object_name": {
+            "type": "string",
+            "description": "Name of the object to apply material to"
+          },
+          "material_name": {
+            "type": "string",
+            "description": "Name for the material"
+          },
+          "color": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "RGBA color [r, g, b, a] values 0-1"
+          },
+          "metallic": {
+            "type": "number",
+            "description": "Metallic value 0-1"
+          },
+          "roughness": {
+            "type": "number",
+            "description": "Roughness value 0-1"
+          }
+        },
+        "required": ["object_name", "material_name"]
+      }
+    },
+    {
+      "name": "boolean_operation",
+      "description": "Perform boolean operation between two objects in FreeCAD",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": ["union", "subtract", "intersect"],
+            "description": "Boolean operation type"
+          },
+          "object1": {
+            "type": "string",
+            "description": "First object name (base for subtract)"
+          },
+          "object2": {
+            "type": "string",
+            "description": "Second object name (tool for subtract)"
+          },
+          "result_name": {
+            "type": "string",
+            "description": "Name for the resulting object"
+          }
+        },
+        "required": ["operation", "object1", "object2"]
+      }
+    },
+    {
+      "name": "render_scene",
+      "description": "Render the Blender scene to an image",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "output_path": {
+            "type": "string",
+            "description": "Output file path for the rendered image"
+          },
+          "resolution_x": {
+            "type": "integer",
+            "description": "Horizontal resolution in pixels"
+          },
+          "resolution_y": {
+            "type": "integer",
+            "description": "Vertical resolution in pixels"
+          },
+          "engine": {
+            "type": "string",
+            "enum": ["CYCLES", "EEVEE", "WORKBENCH"],
+            "description": "Render engine to use"
+          },
+          "samples": {
+            "type": "integer",
+            "description": "Number of render samples"
+          }
+        },
+        "required": ["output_path"]
+      }
+    },
+    {
+      "name": "export_model",
+      "description": "Export 3D model to a file format",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "enum": ["blender", "freecad"],
+            "description": "Source application"
+          },
+          "filepath": {
+            "type": "string",
+            "description": "Output file path"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["GLB", "GLTF", "FBX", "OBJ", "STL", "STEP", "IGES", "BREP"],
+            "description": "Export format"
+          },
+          "objects": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Object names to export (all if omitted)"
+          }
+        },
+        "required": ["application", "filepath", "format"]
+      }
+    },
+    {
+      "name": "get_scene_info",
+      "description": "Get information about the current scene or document",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "enum": ["blender", "freecad"],
+            "description": "Target application"
+          },
+          "include_objects": {
+            "type": "boolean",
+            "description": "Include list of objects"
+          }
+        },
+        "required": ["application"]
+      }
+    },
+    {
+      "name": "execute_code",
+      "description": "Execute arbitrary Python code in Blender or FreeCAD",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "application": {
+            "type": "string",
+            "enum": ["blender", "freecad"],
+            "description": "Target application"
+          },
+          "code": {
+            "type": "string",
+            "description": "Python code to execute"
+          }
+        },
+        "required": ["application", "code"]
+      }
+    },
+    {
+      "name": "add_camera",
+      "description": "Add a camera to the Blender scene",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Camera name"
+          },
+          "location": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "XYZ position"
+          },
+          "rotation": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "XYZ rotation in radians"
+          }
+        }
+      }
+    },
+    {
+      "name": "add_light",
+      "description": "Add a light to the Blender scene",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Light name"
+          },
+          "light_type": {
+            "type": "string",
+            "enum": ["POINT", "SUN", "SPOT", "AREA"],
+            "description": "Type of light"
+          },
+          "location": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "XYZ position"
+          },
+          "energy": {
+            "type": "number",
+            "description": "Light energy/power"
+          }
+        }
+      }
+    }
+  ]
+}

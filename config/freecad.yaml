@@ -1,0 +1,18 @@
+# FreeCAD Server Configuration
+
+server:
+  host: "127.0.0.1"
+  port: 9877
+  timeout: 30.0
+
+export:
+  default_format: "STEP"
+  supported_formats:
+    - STEP
+    - IGES
+    - STL
+    - OBJ
+    - BREP
+
+mesh:
+  default_tolerance: 0.1
