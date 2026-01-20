@@ -9,35 +9,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Initial project structure
-- Research documentation
-  - `BLENDER_FREECAD_API_RESEARCH.md` — Comprehensive technical analysis
-  - `MASTER_PLAN.md` — Project roadmap and architecture
-  - `STAGE_1_PLAN.md` — Blender Socket Addon (87 tasks)
-  - `STAGE_2_PLAN.md` — FreeCAD Socket Server (86 tasks)
-  - `STAGE_3_PLAN.md` — FastAPI Gateway (121 tasks)
-  - `STAGE_4_PLAN.md` — AI Integration & Testing (125 tasks)
-- Project README with overview and quick start guide
-- This CHANGELOG file
-
 ### Planned
-- **Stage 1:** Blender socket addon with primitives, materials, rendering
 - **Stage 2:** FreeCAD socket server with Part module, boolean operations
 - **Stage 3:** FastAPI gateway with REST endpoints and WebSocket
 - **Stage 4:** AI function schemas, test suite, documentation
 
 ---
 
-## Version History
+## [0.1.0] - 2026-01-20
 
-### [0.1.0] - TBD
-- Stage 1 complete: Blender Socket Addon
-- Socket server running on port 9876
-- Basic primitives (cube, sphere, cylinder, cone, torus, plane)
-- Material creation and application
-- Render to PNG
-- Export to GLB/OBJ/FBX
+### Added
+- **Stage 1 Complete: Blender Socket Addon**
+- `src/blender/addon/` — Full socket server addon
+  - `server.py` — TCP socket server on port 9876
+  - `handlers.py` — Command dispatcher with thread-safe execution
+  - `primitives.py` — Mesh primitives (cube, sphere, cylinder, cone, torus, plane, empty)
+  - `materials.py` — Material creation and application
+  - `scene.py` — Scene management, cameras, lights
+  - `rendering.py` — Render and export operations
+- `src/common/` — Shared utilities
+  - `protocol.py` — JSON-RPC message classes
+  - `exceptions.py` — Custom exception hierarchy
+- `src/blender/scripts/start_server.py` — Headless startup script
+- `tests/test_client.py` — Socket client for testing
+- 45 registered command handlers
+- Headless mode support (blender -b)
+- All 10 integration tests passing
+
+### Changed
+- Moved planning docs from `research/` to `plan/`
+- Added WSTODO files for all 4 stages
+
+---
 
 ### [0.2.0] - TBD
 - Stage 2 complete: FreeCAD Socket Server

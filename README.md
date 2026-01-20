@@ -76,22 +76,25 @@
 
 ```
 eng/
-├── research/                    # Research & planning documents
+├── plan/                        # Planning documents
 │   ├── BLENDER_FREECAD_API_RESEARCH.md
 │   ├── MASTER_PLAN.md
 │   ├── STAGE_1_PLAN.md         # Blender Socket Addon
 │   ├── STAGE_2_PLAN.md         # FreeCAD Socket Server
 │   ├── STAGE_3_PLAN.md         # FastAPI Gateway
-│   └── STAGE_4_PLAN.md         # AI Integration & Testing
+│   ├── STAGE_4_PLAN.md         # AI Integration & Testing
+│   └── WSTODO_STAGE*.txt       # Task tracking files
 │
-├── src/                         # Source code (coming soon)
-│   ├── blender/                 # Blender addon
-│   ├── freecad/                 # FreeCAD server
-│   └── common/                  # Shared utilities
+├── src/                         # Source code
+│   ├── blender/                 # Blender addon ✅
+│   │   ├── addon/              # Socket server addon
+│   │   └── scripts/            # Startup scripts
+│   ├── freecad/                 # FreeCAD server (Stage 2)
+│   └── common/                  # Shared utilities ✅
 │
-├── api/                         # FastAPI gateway (coming soon)
+├── api/                         # FastAPI gateway (Stage 3)
 │
-├── tests/                       # Test suite (coming soon)
+├── tests/                       # Test suite ✅
 │
 ├── ai/                          # AI schemas & examples (coming soon)
 │
@@ -105,13 +108,11 @@ eng/
 
 ## 🚀 Quick Start
 
-> ⚠️ **Note:** Implementation in progress. See [MASTER_PLAN.md](research/MASTER_PLAN.md) for roadmap.
-
 ### Prerequisites
 
 - Python 3.10+
-- Blender 4.0+
-- FreeCAD 0.21+
+- Blender 4.0+ (5.0.1 tested)
+- FreeCAD 0.21+ (Stage 2)
 
 ### Installation
 
@@ -120,11 +121,8 @@ eng/
 git clone https://github.com/rikkooo/enginnering.git
 cd enginnering
 
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Start services (coming soon)
-./scripts/start_all.sh
+# Start Blender server (headless)
+blender -b -P src/blender/scripts/start_server.py -- --port 9876
 ```
 
 ### Usage Example
@@ -163,12 +161,12 @@ print(response.json())
 
 | Stage | Description | Status |
 |-------|-------------|--------|
-| **1** | Blender Socket Addon | 📝 Planned |
+| **1** | Blender Socket Addon | ✅ Complete |
 | **2** | FreeCAD Socket Server | 📝 Planned |
 | **3** | FastAPI Gateway | 📝 Planned |
 | **4** | AI Integration & Testing | 📝 Planned |
 
-See detailed plans in the `research/` folder.
+See detailed plans in the `plan/` folder.
 
 ---
 
@@ -203,8 +201,8 @@ response = client.chat.completions.create(
 
 ## 📖 Documentation
 
-- [Research Report](research/BLENDER_FREECAD_API_RESEARCH.md) — Full technical analysis
-- [Master Plan](research/MASTER_PLAN.md) — Project roadmap
+- [Research Report](plan/BLENDER_FREECAD_API_RESEARCH.md) — Full technical analysis
+- [Master Plan](plan/MASTER_PLAN.md) — Project roadmap
 - [API Reference](docs/API.md) — Endpoint documentation (coming soon)
 - [Setup Guide](docs/SETUP.md) — Installation instructions (coming soon)
 
