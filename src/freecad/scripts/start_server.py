@@ -2,8 +2,8 @@
 """
 FreeCAD Socket Server Startup Script
 
-Run with: freecadcmd start_server.py -- --port 9877
-Or: FreeCADCmd start_server.py -- --port 9877
+Run with: freecad.cmd -c "exec(open('/path/to/start_server.py').read())"
+Or set FREECAD_SERVER_PORT env var before running
 """
 
 import sys
@@ -11,24 +11,42 @@ import os
 import signal
 import argparse
 
-# Add paths for imports
-script_dir = os.path.dirname(os.path.abspath(__file__))
+# Determine script location for imports
+# Handle both direct execution and exec() scenarios
+if '__file__' in dir():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+else:
+    # When run via exec(), use current working directory
+    script_dir = os.path.join(os.getcwd(), 'src', 'freecad', 'scripts')
+    
 src_dir = os.path.dirname(os.path.dirname(script_dir))
-sys.path.insert(0, src_dir)
-sys.path.insert(0, os.path.dirname(script_dir))
+freecad_dir = os.path.dirname(script_dir)
 
-# Parse arguments (after --)
+sys.path.insert(0, src_dir)
+sys.path.insert(0, freecad_dir)
+
+# Parse arguments - support env vars and command line
 def parse_args():
+    # Support environment variables for configuration
+    host = os.environ.get('FREECAD_SERVER_HOST', '127.0.0.1')
+    port = int(os.environ.get('FREECAD_SERVER_PORT', '9877'))
+    
+    # Also try command line args if available
     parser = argparse.ArgumentParser(description='FreeCAD Socket Server')
-    parser.add_argument('--host', default='127.0.0.1', help='Host to bind to')
-    parser.add_argument('--port', type=int, default=9877, help='Port to listen on')
+    parser.add_argument('--host', default=host, help='Host to bind to')
+    parser.add_argument('--port', type=int, default=port, help='Port to listen on')
     
     # Find args after --
     try:
         idx = sys.argv.index('--')
         args = parser.parse_args(sys.argv[idx + 1:])
-    except ValueError:
-        args = parser.parse_args([])
+    except (ValueError, IndexError):
+        # Use defaults from env vars
+        class Args:
+            pass
+        args = Args()
+        args.host = host
+        args.port = port
         
     return args
 

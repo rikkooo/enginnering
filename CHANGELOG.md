@@ -10,9 +10,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
-- **Stage 2:** FreeCAD socket server with Part module, boolean operations
 - **Stage 3:** FastAPI gateway with REST endpoints and WebSocket
 - **Stage 4:** AI function schemas, test suite, documentation
+
+---
+
+## [0.2.0] - 2026-01-20
+
+### Added
+- **Stage 2 Complete: FreeCAD Socket Server**
+- `src/freecad/server/` — Full socket server implementation
+  - `server.py` — TCP socket server on port 9877
+  - `handlers.py` — Command dispatcher with handler registration
+  - `primitives.py` — Part primitives (box, sphere, cylinder, cone, torus, plane, wedge, helix)
+  - `document.py` — Document management (new, open, save, close)
+  - `boolean.py` — Boolean operations (union, subtract, intersect) + shape modifications
+  - `export.py` — Export/import (STEP, IGES, STL, OBJ, BREP)
+- `src/freecad/scripts/start_server.py` — Headless startup script
+- `tests/test_freecad_client.py` — Socket client for testing
+- 43 registered command handlers
+- Shape modifications (extrude, revolve, fillet, chamfer, mirror, offset)
+- Python code execution in FreeCAD context
+- All 12 integration tests passing
 
 ---
 

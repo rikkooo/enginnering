@@ -135,18 +135,16 @@ def export_stl(
     if not objs:
         return {"success": False, "message": "No objects to export"}
         
-    # Create mesh from shapes
-    meshes = []
+    # Create mesh from shapes using Mesh.export
+    shapes = []
     for obj in objs:
-        if hasattr(obj, 'Shape'):
-            mesh = Mesh.Mesh(obj.Shape.tessellate(tolerance)[0])
-            meshes.append(mesh)
+        if hasattr(obj, 'Shape') and obj.Shape.isValid():
+            shapes.append(obj)
             
-    if meshes:
-        combined = meshes[0]
-        for m in meshes[1:]:
-            combined.addMesh(m)
-        combined.write(filepath)
+    if shapes:
+        Mesh.export(shapes, filepath)
+    else:
+        return {"success": False, "message": "No valid shapes to export"}
     
     return {
         "success": True,
