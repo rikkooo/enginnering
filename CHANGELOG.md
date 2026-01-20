@@ -10,8 +10,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
-- **Stage 3:** FastAPI gateway with REST endpoints and WebSocket
 - **Stage 4:** AI function schemas, test suite, documentation
+
+---
+
+## [0.3.0] - 2026-01-20
+
+### Added
+- **Stage 3 Complete: FastAPI Gateway**
+- `api/` — Full FastAPI application
+  - `main.py` — FastAPI app with CORS, routers, WebSocket
+  - `config.py` — Pydantic Settings configuration
+  - `clients/` — Async socket clients for Blender/FreeCAD
+  - `models/` — Pydantic request/response models
+  - `routers/` — REST endpoints (health, blender, freecad)
+  - `websocket/` — WebSocket handlers for real-time execution
+- `scripts/` — Startup and management scripts
+  - `start_api.sh` — Start FastAPI gateway
+  - `start_all.sh` — Start all services
+  - `stop_all.sh` — Stop all services
+  - `health_check.sh` — Check service status
+- REST endpoints for Blender primitives, materials, rendering, export
+- REST endpoints for FreeCAD primitives, boolean operations, export
+- WebSocket endpoints for real-time code execution
+- Swagger UI at `/docs`, ReDoc at `/redoc`
+- Health check endpoints for all services
 
 ---
 
