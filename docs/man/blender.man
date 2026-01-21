@@ -1,0 +1,380 @@
+# Blender API Manual
+# 3DM-API - Blender Commands Reference
+# Version: 1.0.0
+# API Base: http://localhost:8000/api/v1/blender
+
+---
+
+# OVERVIEW
+# ========
+# The Blender API provides programmatic control over Blender 3D modeling,
+# rendering, and scene management through a REST interface.
+# 
+# Connection: Socket-based addon running inside Blender
+# Port: 9876 (configurable)
+# Protocol: JSON over TCP
+
+---
+
+# COMMANDS
+# ========
+
+create_primitive:
+  description: Create a 3D primitive shape in Blender
+  endpoint: POST /api/v1/blender/primitive
+  parameters:
+    primitive_type:
+      type: string
+      required: true
+      values: [cube, sphere, cylinder, cone, torus, plane, circle, uv_sphere, ico_sphere]
+      description: Type of primitive to create
+    name:
+      type: string
+      required: false
+      description: Name for the created object
+    location:
+      type: array[3]
+      required: false
+      default: [0, 0, 0]
+      description: XYZ position coordinates
+    size:
+      type: number
+      required: false
+      default: 1.0
+      description: Size/scale of the primitive
+    radius:
+      type: number
+      required: false
+      description: Radius for sphere, cylinder, cone, torus
+    height:
+      type: number
+      required: false
+      description: Height for cylinder, cone
+    segments:
+      type: integer
+      required: false
+      description: Number of segments for curved primitives
+  example:
+    request:
+      primitive_type: sphere
+      name: MySphere
+      location: [0, 0, 2]
+      radius: 1.5
+    response:
+      status: success
+      object_name: MySphere
+
+---
+
+modify_object:
+  description: Modify an existing 3D object (transform, rename, delete)
+  endpoint: POST /api/v1/blender/modify
+  parameters:
+    object_name:
+      type: string
+      required: true
+      description: Name of the object to modify
+    action:
+      type: string
+      required: true
+      values: [transform, rename, delete]
+      description: Action to perform
+    location:
+      type: array[3]
+      required: false
+      description: New XYZ position (for transform)
+    rotation:
+      type: array[3]
+      required: false
+      description: New XYZ rotation in radians (for transform)
+    scale:
+      type: array[3]
+      required: false
+      description: New XYZ scale factors (for transform)
+    new_name:
+      type: string
+      required: false
+      description: New name (for rename action)
+  example:
+    request:
+      object_name: Cube
+      action: transform
+      location: [2, 0, 0]
+      rotation: [0, 0, 0.785]
+      scale: [1, 1, 2]
+    response:
+      status: success
+
+---
+
+apply_material:
+  description: Create and apply a material to an object
+  endpoint: POST /api/v1/blender/material
+  parameters:
+    object_name:
+      type: string
+      required: true
+      description: Name of the object to apply material to
+    material_name:
+      type: string
+      required: true
+      description: Name for the material
+    color:
+      type: array[4]
+      required: false
+      default: [0.8, 0.8, 0.8, 1.0]
+      description: RGBA color values (0-1 range)
+    metallic:
+      type: number
+      required: false
+      default: 0.0
+      range: [0, 1]
+      description: Metallic property
+    roughness:
+      type: number
+      required: false
+      default: 0.5
+      range: [0, 1]
+      description: Roughness property
+    emission:
+      type: array[4]
+      required: false
+      description: Emission color RGBA
+    emission_strength:
+      type: number
+      required: false
+      description: Emission strength
+  example:
+    request:
+      object_name: MySphere
+      material_name: RedMetal
+      color: [1.0, 0.1, 0.1, 1.0]
+      metallic: 0.9
+      roughness: 0.2
+    response:
+      status: success
+      material_name: RedMetal
+
+---
+
+add_camera:
+  description: Add a camera to the scene
+  endpoint: POST /api/v1/blender/camera
+  parameters:
+    name:
+      type: string
+      required: false
+      default: Camera
+      description: Camera name
+    location:
+      type: array[3]
+      required: false
+      default: [0, -10, 5]
+      description: XYZ position
+    rotation:
+      type: array[3]
+      required: false
+      description: XYZ rotation in radians
+    look_at:
+      type: array[3]
+      required: false
+      description: Point camera at this location
+    focal_length:
+      type: number
+      required: false
+      default: 50
+      description: Focal length in mm
+    set_active:
+      type: boolean
+      required: false
+      default: true
+      description: Set as active camera
+  example:
+    request:
+      name: MainCamera
+      location: [7, -7, 5]
+      look_at: [0, 0, 0]
+      focal_length: 35
+    response:
+      status: success
+      camera_name: MainCamera
+
+---
+
+add_light:
+  description: Add a light to the scene
+  endpoint: POST /api/v1/blender/light
+  parameters:
+    name:
+      type: string
+      required: false
+      default: Light
+      description: Light name
+    light_type:
+      type: string
+      required: false
+      default: POINT
+      values: [POINT, SUN, SPOT, AREA]
+      description: Type of light
+    location:
+      type: array[3]
+      required: false
+      default: [0, 0, 5]
+      description: XYZ position
+    energy:
+      type: number
+      required: false
+      default: 1000
+      description: Light energy/power in watts
+    color:
+      type: array[3]
+      required: false
+      default: [1, 1, 1]
+      description: RGB color
+  example:
+    request:
+      name: KeyLight
+      light_type: AREA
+      location: [5, -5, 8]
+      energy: 500
+      color: [1, 0.95, 0.9]
+    response:
+      status: success
+      light_name: KeyLight
+
+---
+
+render_scene:
+  description: Render the scene to an image file
+  endpoint: POST /api/v1/blender/render
+  parameters:
+    output_path:
+      type: string
+      required: true
+      description: Output file path for rendered image
+    resolution_x:
+      type: integer
+      required: false
+      default: 1920
+      description: Horizontal resolution in pixels
+    resolution_y:
+      type: integer
+      required: false
+      default: 1080
+      description: Vertical resolution in pixels
+    engine:
+      type: string
+      required: false
+      default: CYCLES
+      values: [CYCLES, EEVEE, WORKBENCH]
+      description: Render engine
+    samples:
+      type: integer
+      required: false
+      default: 128
+      description: Number of render samples
+    transparent:
+      type: boolean
+      required: false
+      default: false
+      description: Transparent background
+  example:
+    request:
+      output_path: /tmp/render.png
+      resolution_x: 1920
+      resolution_y: 1080
+      engine: CYCLES
+      samples: 256
+    response:
+      status: success
+      output_path: /tmp/render.png
+
+---
+
+export_model:
+  description: Export 3D model to file
+  endpoint: POST /api/v1/blender/export
+  parameters:
+    filepath:
+      type: string
+      required: true
+      description: Output file path
+    format:
+      type: string
+      required: true
+      values: [GLB, GLTF, FBX, OBJ, STL, PLY, ABC]
+      description: Export format
+    objects:
+      type: array[string]
+      required: false
+      description: Object names to export (all if omitted)
+    apply_modifiers:
+      type: boolean
+      required: false
+      default: true
+      description: Apply modifiers before export
+  example:
+    request:
+      filepath: /tmp/model.glb
+      format: GLB
+      objects: [MySphere, MyCube]
+    response:
+      status: success
+      filepath: /tmp/model.glb
+
+---
+
+get_scene_info:
+  description: Get information about the current scene
+  endpoint: GET /api/v1/blender/scene
+  parameters:
+    include_objects:
+      type: boolean
+      required: false
+      default: true
+      description: Include list of objects
+  example:
+    request: {}
+    response:
+      status: success
+      scene_name: Scene
+      objects:
+        - name: Cube
+          type: MESH
+          location: [0, 0, 0]
+        - name: Camera
+          type: CAMERA
+          location: [7, -7, 5]
+
+---
+
+execute_code:
+  description: Execute arbitrary Python code in Blender
+  endpoint: POST /api/v1/blender/execute
+  parameters:
+    code:
+      type: string
+      required: true
+      description: Python code to execute
+  example:
+    request:
+      code: |
+        import bpy
+        bpy.ops.mesh.primitive_monkey_add()
+    response:
+      status: success
+      result: null
+
+---
+
+# QUICK REFERENCE
+# ===============
+# 
+# Create sphere:     POST /blender/primitive  {primitive_type: sphere, radius: 2}
+# Move object:       POST /blender/modify     {object_name: Cube, action: transform, location: [1,2,3]}
+# Add material:      POST /blender/material   {object_name: Cube, material_name: Red, color: [1,0,0,1]}
+# Add camera:        POST /blender/camera     {location: [7,-7,5], look_at: [0,0,0]}
+# Add light:         POST /blender/light      {light_type: SUN, energy: 5}
+# Render:            POST /blender/render     {output_path: /tmp/out.png}
+# Export:            POST /blender/export     {filepath: /tmp/model.glb, format: GLB}
+# Scene info:        GET  /blender/scene

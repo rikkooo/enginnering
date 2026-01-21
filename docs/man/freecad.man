@@ -1,0 +1,346 @@
+# FreeCAD API Manual
+# 3DM-API - FreeCAD Commands Reference
+# Version: 1.0.0
+# API Base: http://localhost:8000/api/v1/freecad
+
+---
+
+# OVERVIEW
+# ========
+# The FreeCAD API provides programmatic control over FreeCAD parametric
+# CAD modeling, boolean operations, and engineering exports.
+# 
+# Connection: Socket-based server running inside FreeCAD
+# Port: 9877 (configurable)
+# Protocol: JSON over TCP
+
+---
+
+# COMMANDS
+# ========
+
+create_primitive:
+  description: Create a 3D primitive shape in FreeCAD
+  endpoint: POST /api/v1/freecad/primitive
+  parameters:
+    primitive_type:
+      type: string
+      required: true
+      values: [box, sphere, cylinder, cone, torus]
+      description: Type of primitive to create
+    name:
+      type: string
+      required: false
+      description: Name for the created object
+    location:
+      type: array[3]
+      required: false
+      default: [0, 0, 0]
+      description: XYZ position coordinates
+    # Box parameters
+    length:
+      type: number
+      required: false
+      default: 10
+      description: Length for box (X dimension)
+    width:
+      type: number
+      required: false
+      default: 10
+      description: Width for box (Y dimension)
+    height:
+      type: number
+      required: false
+      default: 10
+      description: Height for box/cylinder/cone (Z dimension)
+    # Sphere/Cylinder/Cone parameters
+    radius:
+      type: number
+      required: false
+      default: 5
+      description: Radius for sphere, cylinder, cone, torus
+    radius1:
+      type: number
+      required: false
+      description: Bottom radius for cone
+    radius2:
+      type: number
+      required: false
+      description: Top radius for cone
+    # Torus parameters
+    radius_major:
+      type: number
+      required: false
+      description: Major radius for torus
+    radius_minor:
+      type: number
+      required: false
+      description: Minor radius for torus
+  example:
+    request:
+      primitive_type: box
+      name: MyBox
+      length: 20
+      width: 15
+      height: 10
+    response:
+      status: success
+      object_name: MyBox
+
+---
+
+modify_object:
+  description: Modify an existing 3D object (transform, rename, delete)
+  endpoint: POST /api/v1/freecad/modify
+  parameters:
+    object_name:
+      type: string
+      required: true
+      description: Name of the object to modify
+    action:
+      type: string
+      required: true
+      values: [transform, rename, delete]
+      description: Action to perform
+    location:
+      type: array[3]
+      required: false
+      description: New XYZ position (for transform)
+    rotation:
+      type: array[3]
+      required: false
+      description: New XYZ rotation in degrees (for transform)
+    new_name:
+      type: string
+      required: false
+      description: New name (for rename action)
+  example:
+    request:
+      object_name: Box
+      action: transform
+      location: [10, 0, 0]
+      rotation: [0, 0, 45]
+    response:
+      status: success
+
+---
+
+boolean_operation:
+  description: Perform boolean operation between two objects
+  endpoint: POST /api/v1/freecad/boolean
+  parameters:
+    operation:
+      type: string
+      required: true
+      values: [union, subtract, intersect]
+      description: Boolean operation type
+    object1:
+      type: string
+      required: true
+      description: First object name (base for subtract)
+    object2:
+      type: string
+      required: true
+      description: Second object name (tool for subtract)
+    result_name:
+      type: string
+      required: false
+      description: Name for the resulting object
+    delete_originals:
+      type: boolean
+      required: false
+      default: false
+      description: Delete original objects after operation
+  example:
+    request:
+      operation: subtract
+      object1: Box
+      object2: Cylinder
+      result_name: BoxWithHole
+      delete_originals: true
+    response:
+      status: success
+      result_name: BoxWithHole
+
+---
+
+export_model:
+  description: Export 3D model to file
+  endpoint: POST /api/v1/freecad/export
+  parameters:
+    filepath:
+      type: string
+      required: true
+      description: Output file path
+    format:
+      type: string
+      required: true
+      values: [STEP, IGES, BREP, STL, OBJ, DAE]
+      description: Export format
+    objects:
+      type: array[string]
+      required: false
+      description: Object names to export (all if omitted)
+  example:
+    request:
+      filepath: /tmp/part.step
+      format: STEP
+      objects: [BoxWithHole]
+    response:
+      status: success
+      filepath: /tmp/part.step
+
+---
+
+get_document_info:
+  description: Get information about the current document
+  endpoint: GET /api/v1/freecad/document
+  parameters:
+    include_objects:
+      type: boolean
+      required: false
+      default: true
+      description: Include list of objects
+  example:
+    request: {}
+    response:
+      status: success
+      document_name: Unnamed
+      objects:
+        - name: Box
+          type: Part::Box
+          shape: Solid
+        - name: Cylinder
+          type: Part::Cylinder
+          shape: Solid
+
+---
+
+create_sketch:
+  description: Create a 2D sketch for parametric modeling
+  endpoint: POST /api/v1/freecad/sketch
+  parameters:
+    name:
+      type: string
+      required: false
+      default: Sketch
+      description: Sketch name
+    plane:
+      type: string
+      required: false
+      default: XY
+      values: [XY, XZ, YZ]
+      description: Sketch plane
+    elements:
+      type: array
+      required: false
+      description: Sketch elements (lines, circles, arcs)
+  example:
+    request:
+      name: ProfileSketch
+      plane: XY
+      elements:
+        - type: line
+          start: [0, 0]
+          end: [10, 0]
+        - type: line
+          start: [10, 0]
+          end: [10, 10]
+        - type: arc
+          center: [5, 10]
+          radius: 5
+          start_angle: 0
+          end_angle: 180
+    response:
+      status: success
+      sketch_name: ProfileSketch
+
+---
+
+extrude:
+  description: Extrude a sketch or face
+  endpoint: POST /api/v1/freecad/extrude
+  parameters:
+    sketch_name:
+      type: string
+      required: true
+      description: Name of sketch to extrude
+    length:
+      type: number
+      required: true
+      description: Extrusion length
+    direction:
+      type: string
+      required: false
+      default: normal
+      values: [normal, custom]
+      description: Extrusion direction
+    symmetric:
+      type: boolean
+      required: false
+      default: false
+      description: Extrude symmetrically
+    result_name:
+      type: string
+      required: false
+      description: Name for resulting solid
+  example:
+    request:
+      sketch_name: ProfileSketch
+      length: 20
+      symmetric: false
+      result_name: ExtrudedPart
+    response:
+      status: success
+      result_name: ExtrudedPart
+
+---
+
+execute_code:
+  description: Execute arbitrary Python code in FreeCAD
+  endpoint: POST /api/v1/freecad/execute
+  parameters:
+    code:
+      type: string
+      required: true
+      description: Python code to execute
+  example:
+    request:
+      code: |
+        import FreeCAD
+        import Part
+        box = Part.makeBox(10, 10, 10)
+        Part.show(box)
+    response:
+      status: success
+      result: null
+
+---
+
+# QUICK REFERENCE
+# ===============
+# 
+# Create box:        POST /freecad/primitive  {primitive_type: box, length: 20, width: 10, height: 5}
+# Create sphere:     POST /freecad/primitive  {primitive_type: sphere, radius: 10}
+# Create cylinder:   POST /freecad/primitive  {primitive_type: cylinder, radius: 5, height: 20}
+# Move object:       POST /freecad/modify     {object_name: Box, action: transform, location: [10,0,0]}
+# Boolean union:     POST /freecad/boolean    {operation: union, object1: Box, object2: Sphere}
+# Boolean subtract:  POST /freecad/boolean    {operation: subtract, object1: Box, object2: Cylinder}
+# Export STEP:       POST /freecad/export     {filepath: /tmp/part.step, format: STEP}
+# Export STL:        POST /freecad/export     {filepath: /tmp/part.stl, format: STL}
+# Document info:     GET  /freecad/document
+
+---
+
+# BOOLEAN OPERATIONS
+# ==================
+# 
+# union:     Combines two objects into one (A + B)
+# subtract:  Removes object2 from object1 (A - B)
+# intersect: Keeps only overlapping volume (A ∩ B)
+# 
+# Example workflow - Creating a box with a hole:
+#   1. Create box:     {primitive_type: box, name: Base, length: 30, width: 20, height: 10}
+#   2. Create cylinder: {primitive_type: cylinder, name: Hole, radius: 5, height: 15}
+#   3. Position hole:  {object_name: Hole, action: transform, location: [15, 10, -2]}
+#   4. Subtract:       {operation: subtract, object1: Base, object2: Hole, result_name: BoxWithHole}

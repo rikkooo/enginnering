@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.0] - 2026-01-21
+
+### Added
+- **Command Manuals** in YAML format
+  - `docs/man/blender.man` - Complete Blender API reference
+  - `docs/man/freecad.man` - Complete FreeCAD API reference
+- Updated README with manual references and quick command examples
+
+---
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),

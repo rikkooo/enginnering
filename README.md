@@ -203,8 +203,36 @@ response = client.chat.completions.create(
 
 - [Research Report](plan/BLENDER_FREECAD_API_RESEARCH.md) — Full technical analysis
 - [Master Plan](plan/MASTER_PLAN.md) — Project roadmap
-- [API Reference](docs/API.md) — Endpoint documentation (coming soon)
-- [Setup Guide](docs/SETUP.md) — Installation instructions (coming soon)
+
+### Command Manuals
+
+| API | Manual | Description |
+|-----|--------|-------------|
+| **Blender** | [docs/man/blender.man](docs/man/blender.man) | Primitives, materials, lights, cameras, rendering, export |
+| **FreeCAD** | [docs/man/freecad.man](docs/man/freecad.man) | Primitives, boolean operations, sketches, export |
+
+### Quick Command Reference
+
+```yaml
+# Blender - Create sphere with material
+POST /api/v1/blender/primitive:
+  primitive_type: sphere
+  radius: 2
+  name: MySphere
+
+POST /api/v1/blender/material:
+  object_name: MySphere
+  material_name: RedMetal
+  color: [1, 0, 0, 1]
+  metallic: 0.9
+
+# FreeCAD - Boolean subtract
+POST /api/v1/freecad/boolean:
+  operation: subtract
+  object1: Box
+  object2: Cylinder
+  result_name: BoxWithHole
+```
 
 ---
 
